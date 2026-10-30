@@ -32,3 +32,12 @@ create table public.pickup_push_subscriptions (
 alter table public.pickup_weekly_destinations enable row level security;
 alter table public.pickup_days enable row level security;
 alter table public.pickup_push_subscriptions enable row level security;
+
+-- 週に 1 回、来週の送る人を LINE で送る先。公式アカウントを招待したグループ（group）か、友だち追加した人（user）
+create table public.pickup_line_targets (
+  id text primary key,
+  type text not null check (type in ('group', 'user')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.pickup_line_targets enable row level security;

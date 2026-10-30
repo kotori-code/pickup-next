@@ -21,7 +21,7 @@ npm run build
 npx vercel deploy --prod --yes --scope kotori-lab   # 本番へ。GitHub との自動連携はない
 ```
 
-環境変数（`.env.local` と Vercel の Environment Variables）: `APP_PASSWORD`（合言葉・半角英数字）、`SUPABASE_URL`、`SUPABASE_SECRET_KEY`、`NEXT_PUBLIC_VAPID_PUBLIC_KEY`・`VAPID_PRIVATE_KEY`・`VAPID_SUBJECT`（`npx web-push generate-vapid-keys` で作る）。`NEXT_PUBLIC_` はビルド時に埋め込まれるので、変えたらビルドし直す。
+環境変数（`.env.local` と Vercel の Environment Variables）: `APP_PASSWORD`（合言葉・半角英数字）、`SUPABASE_URL`、`SUPABASE_SECRET_KEY`、`NEXT_PUBLIC_VAPID_PUBLIC_KEY`・`VAPID_PRIVATE_KEY`・`VAPID_SUBJECT`（`npx web-push generate-vapid-keys` で作る）、`LINE_CHANNEL_SECRET`・`LINE_CHANNEL_ACCESS_TOKEN`（LINE の Messaging API）、`CRON_SECRET`。`NEXT_PUBLIC_` はビルド時に埋め込まれるので、変えたらビルドし直す。
 
 ## アーキテクチャ
 
@@ -35,6 +35,9 @@ npx vercel deploy --prod --yes --scope kotori-lab   # 本番へ。GitHub との�
 - 送る人のボタンは `useOptimistic` ですぐ光らせる。`setDriver` / `saveDay` は前と同じ値なら書き込まず、通知も送らない。
 - **プッシュ通知**: `public/sw.js` が受け取って出す。購読は `pickup_push_subscriptions`（endpoint ごと、購読した名前つき）。`notifyOthers()` は変えた本人と同じ名前の端末には送らない。404/410 の購読は消す。Server Action の `after()` で応答のあとに送る。iPhone はホーム画面に追加したときだけ通知を受け取れる。
 - 開くたびに `PushToggle` が今の名前で購読を登録し直す（名前を変えたときのため）。
+- **LINE の週 1 回のまとめ**: Vercel Cron（`vercel.json`、毎週日曜 11:00 UTC = 20:00 JST。Hobby プランは 1 時間の中のどこかで動く）が `/api/cron/weekly-line` を呼び、来週の送る人を `pickup_line_targets` のすべての送り先にプッシュで送る。Vercel が付ける `Authorization: Bearer <CRON_SECRET>` で確かめる。設定画面の「今すぐ LINE に送る」も同じ `sendWeeklySummary()` を使う。
+  - 送り先は `/api/line/webhook` で覚える。公式アカウントをグループに招待（join）・友だち追加（follow）で追加、退出（leave）・ブロック（unfollow）で削除。署名（x-line-signature）を確かめる。この 2 つの API は proxy の合言葉の確認を通さない。
+  - LINE の無料プランはプッシュが月 200 通まで。グループへの送信は人数分として数える。
 - DB の構造を変えるときは Supabase MCP の `apply_migration` で適用し、`docs/schema.sql` も同じ内容に直す。
 
 ## 規約

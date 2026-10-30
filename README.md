@@ -18,6 +18,7 @@ LINE で「明日どっちが送る？」とやり取りする代わりに、パ
 - **行先**: 曜日ごとの「いつもの行先」が自動で入ります。日ごとに書き換えることもできます。
 - **メモ**: 行先を押すと、その日の詳細を書けます。メモがある日は一覧に 📝 が付きます。
 - **今週・来週**: 月〜日の 1 週間を一覧で表示し、毎週月曜 0:00（日本時間）に新しい週に変わります。来週の分も先に決められます。
+- **LINE でまとめて送る**: 毎週日曜の夜に、来週 1 週間分の送る人と行先を LINE の公式アカウントから家族のグループに送ります。設定画面からすぐ送ることもできます。
 - **通知**: ほかの家族が送る人・行先・メモを変えると、スマホにプッシュ通知が届きます（変えた本人には届きません）。iPhone は「ホーム画面に追加」して開くと通知を受け取れます。
 
 ## 技術スタック
@@ -27,6 +28,7 @@ LINE で「明日どっちが送る？」とやり取りする代わりに、パ
 | フレームワーク | Next.js 16（App Router・Server Actions・Proxy・Cache Components・`after()`）/ React 19 / TypeScript |
 | スタイル       | Tailwind CSS 4                                                                                 |
 | データベース   | Supabase（Postgres。無料プラン）                                                               |
+| LINE           | LINE Messaging API（公式アカウント・Webhook）・Vercel Cron                                     |
 | 通知           | Web Push（Service Worker + VAPID、`web-push` ライブラリ）・PWA（Web App Manifest）             |
 | ホスティング   | Vercel（Hobby プラン・東京リージョン）                                                         |
 | テスト         | Vitest                                                                                         |
@@ -38,6 +40,7 @@ LINE で「明日どっちが送る？」とやり取りする代わりに、パ
 - **データ**: Supabase にはサーバー（Server Actions / Server Components）からだけ secret キーでつなぎます。テーブルは RLS をオンにしてポリシーを作っていないので、ブラウザ用のキーでは読み書きできません。
 - **週と日付**: Vercel のサーバーは UTC で動くので、「今日」は日本時間で決めています（`src/lib/week.ts`）。記録は消さず、「今日を含む週」を表示することで月曜にリセットされます。
 - **行先**: 日ごとの上書き → 曜日ごとのいつもの行先、の順に決まります。
+- **LINE**: 公式アカウントをグループに招待すると、Webhook でグループの ID を覚えます。Vercel Cron が毎週日曜 20 時ごろに来週の分をまとめてプッシュで送ります。
 - **通知**: 端末ごとの購読（endpoint）を名前と一緒に保存し、変更があったら Server Action の `after()` で応答のあとに送ります。届かなくなった端末（404/410）は自動で消します。
 
 ## 手元で動かす
@@ -60,6 +63,9 @@ npm test
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | 通知の公開鍵（ビルド時に埋め込まれる）                            |
 | `VAPID_PRIVATE_KEY`            | 通知の秘密鍵                                                      |
 | `VAPID_SUBJECT`                | 連絡先（`mailto:` か `https://` の URL）                          |
+| `LINE_CHANNEL_SECRET`          | LINE のチャネルシークレット（Webhook の署名を確かめる）           |
+| `LINE_CHANNEL_ACCESS_TOKEN`    | LINE のチャネルアクセストークン（長期）                           |
+| `CRON_SECRET`                  | Vercel Cron の呼び出しを確かめる秘密の値                          |
 
 ### データベース
 

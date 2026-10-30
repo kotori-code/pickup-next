@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import {
@@ -21,6 +21,7 @@ import {
   type NotificationPayload,
 } from "@/lib/notification";
 import { saveDay, setDriver } from "@/lib/server/days";
+import { appUrl, lineConfigured, sendWeeklySummary } from "@/lib/server/line";
 import {
   deleteSubscription,
   isSubscriptionJson,
@@ -189,4 +190,29 @@ export async function deletePushSubscriptionAction(
 ): Promise<void> {
   await requireMember();
   await deleteSubscription(String(endpoint));
+}
+
+export type LineSendState = { message: string; ok: boolean; at: number } | null;
+
+/** 設定画面の「今すぐ LINE に送る」。毎週の自動送信と同じ内容を送る */
+export async function sendWeeklyLineAction(): Promise<LineSendState> {
+  await requireMember();
+  if (!lineConfigured())
+    return { message: "LINE の鍵がまだ設定されていません", ok: false, at: Date.now() };
+  const host = (await headers()).get("host");
+  try {
+    const { sent, failed } = await sendWeeklySummary(appUrl(`https://${host}`));
+    if (sent === 0 && failed === 0)
+      return {
+        message: "送り先がありません。公式アカウントをグループに招待してください",
+        ok: false,
+        at: Date.now(),
+      };
+    return failed > 0
+      ? { message: `${failed} か所に送れませんでした（送れたのは ${sent} か所）`, ok: false, at: Date.now() }
+      : { message: `${sent} か所に送りました`, ok: true, at: Date.now() };
+  } catch (error) {
+    console.error(error);
+    return { message: "送れませんでした。時間をおいてもう一度試してください", ok: false, at: Date.now() };
+  }
 }

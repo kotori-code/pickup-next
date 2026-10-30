@@ -10,6 +10,9 @@ import {
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (pathname === "/login") return NextResponse.next();
+  // LINE の Webhook と Vercel Cron は Cookie を持たない。それぞれ署名・CRON_SECRET で確かめる
+  if (pathname === "/api/line/webhook" || pathname.startsWith("/api/cron/"))
+    return NextResponse.next();
 
   const session = request.cookies.get(SESSION_COOKIE)?.value;
   if (!(await isValidSession(session, process.env.APP_PASSWORD))) {
