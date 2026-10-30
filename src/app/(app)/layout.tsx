@@ -12,7 +12,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <RefreshOnFocus />
       <header className="sticky top-0 z-10 border-b border-teal-100 bg-white/90 px-4 py-3 backdrop-blur">
         <Link href="/" className="text-lg font-bold text-teal-600">
-          🚗 送迎当番
+          🚗 送る人
         </Link>
       </header>
       <main className="flex-1 px-4 pt-4 pb-28">{children}</main>

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-家族だけで使う「送迎当番」。今週・来週の各日に、子どもを送る人（パパ/ママ）と行先を決め、変わったら家族のスマホにプッシュ通知する。要件は `docs/requirements.md`。
+家族だけで使う「送る人」。今週・来週の各日に、子どもを送る人（パパ/ママ）と行先を決め、変わったら家族のスマホにプッシュ通知する。要件は `docs/requirements.md`。
 
 ## コマンド
 

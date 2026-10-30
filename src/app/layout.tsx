@@ -2,11 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "送迎当番",
+  title: "送る人",
   description: "子どもの送り担当と行先を家族で確かめるためのアプリ",
   // 家族だけで使うので検索エンジンに載せない
   robots: { index: false, follow: false },
-  appleWebApp: { title: "送迎当番", statusBarStyle: "default" },
+  appleWebApp: { title: "送る人", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

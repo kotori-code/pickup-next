@@ -9,7 +9,7 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
         🚗
       </p>
       <h1 className="mt-2 text-center text-xl font-bold text-teal-600">
-        送迎当番
+        送る人
       </h1>
       <p className="mt-2 mb-6 text-center text-sm text-stone-500">
         家族で決めた合言葉を入れてください。

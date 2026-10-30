@@ -6,7 +6,7 @@ const today = "2026-10-30";
 describe("driverChangedNotification", () => {
   it("誰がどの日を誰にしたかを書く", () => {
     expect(driverChangedNotification("ママ", "2026-10-31", "papa", today)).toEqual({
-      title: "送迎当番",
+      title: "送る人",
       body: "ママさんが 明日 10/31(土) の送りを「パパ」にしました",
       url: "/",
       tag: "day-2026-10-31",

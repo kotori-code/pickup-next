@@ -3,7 +3,7 @@
 import { driverLabel, type Driver } from "./driver";
 import { formatDayWithRelative, weekOffsetOf } from "./week";
 
-export const NOTIFICATION_TITLE = "送迎当番";
+export const NOTIFICATION_TITLE = "送る人";
 
 export type NotificationPayload = {
   title: string;

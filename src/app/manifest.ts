@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 // ホーム画面に追加したときの設定。iPhone はホーム画面から開いたときだけ通知を受け取れる
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "送迎当番",
-    short_name: "送迎当番",
+    name: "送る人",
+    short_name: "送る人",
     description: "子どもの送り担当と行先を家族で確かめるためのアプリ",
     start_url: "/",
     display: "standalone",

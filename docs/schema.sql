@@ -1,4 +1,4 @@
--- 送迎当番のテーブル（Supabase MCP の apply_migration で適用したものと同じ）
+-- 送る人のテーブル（Supabase MCP の apply_migration で適用したものと同じ）
 -- places-next と同じ Supabase プロジェクトに相乗りしているので、テーブル名は pickup_ で始める
 
 -- 曜日ごとの固定の行先。weekday は 1=月 … 7=日
