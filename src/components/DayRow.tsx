@@ -28,8 +28,8 @@ export function DayRow({ date, today, driver, destination, hasMemo }: Props) {
         isToday ? "ring-2 ring-teal-400" : ""
       } ${isPast ? "opacity-60" : ""}`}
     >
-      <div className="w-11 shrink-0 text-center leading-tight">
-        <p className="text-lg font-bold">
+      <div className="w-14 shrink-0 text-center leading-tight">
+        <p className="whitespace-nowrap text-lg font-bold tabular-nums">
           {m}/{d}
         </p>
         <p className={`text-xs font-bold ${WEEKDAY_COLOR[weekday] ?? "text-stone-500"}`}>
